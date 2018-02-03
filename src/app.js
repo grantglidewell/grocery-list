@@ -30,10 +30,11 @@ class App extends Component {
     });
   }
   deleteItem(id) {
-    fetch(`${this.state.uri}/delete/${id}`, { method: 'DELETE'})
+    fetch(`${this.state.uri}/delete/${id}`)
       .then(() => this.getData())
   }
   postItem(text) {
+    text = text.replace(/\?|\:|\'|\"|\!/g, '')
     fetch(`${this.state.uri}/post/${text}/${this.state.session}`,  { method: 'POST'})
       .then(() => this.getData())
       .then(() => this.input.value = '')

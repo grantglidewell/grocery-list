@@ -1,43 +1,44 @@
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
+const url = require('./jaws.config');
 
 const server = express();
-const connection = mysql.createConnection(process.env.JAWSDB_URL);
+const connection = mysql.createConnection(process.env.JAWSDB_URL || url);
 
+connection.connect();
 server.use(express.static(path.resolve(__dirname, 'build')));
 
-// this should return my react page
-server.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
-});
-
 server.get('/api/data/:session', (req, res) => {
-  connection.connect();
   connection.query(`SELECT * from todos WHERE owner='${req.params.session}'`, (err, rows) => {
-    if (err) throw err;
+    if (err) console.log(err);
     return res.json(rows);
   });
-  connection.end();
 });
 
 server.post('/api/post/:text/:session', (req, res) => {
-  connection.connect();
-  connection.query(`INSERT INTO todos (owner, todo) VALUES('${req.params.session}', '${req.params.text}')`, (err, rows) => {
-    if (err) throw err;
-    return res(rows);
+  let newRows;
+  connection.query('INSERT INTO todos (owner, todo) VALUES (?,?)', [req.params.session, req.params.text], (err, rows) => {
+    if (err) console.log(err);
+    newRows = rows;
+    return rows;
   });
-  connection.end();
+  return res.sendStatus(201, newRows);
 });
 
 
-server.delete('/api/delete/:id', (req, res) => {
-  connection.connect();
-  connection.query(`DELETE FROM todos WHERE id=${req.params.id}`, (err, rows) => {
-    if (err) throw err;
-    return res(rows);
+server.get('/api/delete/:id', (req, res) => {
+  const newID = req.params.id.replace(/[A-z]/g, ' ').trim().slice(0, -4);
+  connection.query('DELETE FROM todos WHERE id =?', [newID], (err, rows) => {
+    if (err) console.log(err);
+    console.log(rows);
+    return rows.changedRows;
   });
-  connection.end();
+  return res.sendStatus(200);
+});
+
+server.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 
 server.listen(process.env.PORT || 3001, () => {
