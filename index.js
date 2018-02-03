@@ -21,21 +21,21 @@ server.get('/api/data/:session', (req, res) => {
   connection.end();
 });
 
-server.get('/api/post/:text/:session', (req, res) => {
+server.post('/api/post/:text/:session', (req, res) => {
   connection.connect();
   connection.query(`INSERT INTO todos (owner, todo) VALUES('${req.params.session}', '${req.params.text}')`, (err, rows) => {
     if (err) throw err;
-    return res.json(rows);
+    return res(rows);
   });
   connection.end();
 });
 
 
-server.get('/api/delete/:id', (req, res) => {
+server.delete('/api/delete/:id', (req, res) => {
   connection.connect();
   connection.query(`DELETE FROM todos WHERE id=${req.params.id}`, (err, rows) => {
     if (err) throw err;
-    return res.json(rows);
+    return res(rows);
   });
   connection.end();
 });

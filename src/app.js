@@ -30,15 +30,11 @@ class App extends Component {
     });
   }
   deleteItem(id) {
-    fetch(`${this.state.uri}/delete/${id}`)
+    fetch(`${this.state.uri}/delete/${id}`, { method: 'DELETE'})
       .then(() => this.getData())
   }
   postItem(text) {
-    // light sanatizing to remove error causing characters
-    if(text.match(new RegExp(/[-/\\^%$*+?#.()|[\]{}]/g))){
-      text = text.replace(new RegExp(/[-/\\^%$*+?#.()|[\]{}]/g), '');
-    }
-    fetch(`${this.state.uri}/post/${text}/${this.state.session}`)
+    fetch(`${this.state.uri}/post/${text}/${this.state.session}`,  { method: 'POST'})
       .then(() => this.getData())
       .then(() => this.input.value = '')
   }
