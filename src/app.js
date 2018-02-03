@@ -11,7 +11,7 @@ class App extends Component {
       session: props.session,
       input: '',
       todos: [],
-      uri: `${process.env.NOW_URL}/api`,
+      uri: `/api`,
     };
   }
   componentDidMount() {
