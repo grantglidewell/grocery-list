@@ -1,10 +1,9 @@
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
-const url = require('./jaws.config');
 
 const server = express();
-const connection = mysql.createConnection(process.env.JAWSDB_URL || url);
+const connection = mysql.createConnection(process.env.JAWSDB_URL);
 
 connection.connect();
 server.use(express.static(path.resolve(__dirname, 'build')));
