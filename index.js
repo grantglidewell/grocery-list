@@ -1,15 +1,17 @@
-const app = require('express')();
+const express = require('express');
 const mongoose = require('mongoose');
 const Todo = require('./models/todo');
 const path = require('path');
 
-app.use(app.static(path.resolve(__dirname, 'build')));
+const server = express();
+
+server.use(server.static(path.resolve(__dirname, 'build')));
 
 mongoose.Promise = global.Promise;
 
 mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
 
-app.get('/api/data/:session', (req, res) => {
+server.get('/api/data/:session', (req, res) => {
   Todo.find((err, data) => {
     if (err) {
       console.error(err);
@@ -18,7 +20,7 @@ app.get('/api/data/:session', (req, res) => {
   });
 });
 
-app.get('/api/post/:text/:session', (req, res, next) => {
+server.get('/api/post/:text/:session', (req, res, next) => {
   const post = new Todo({
     todo: req.params.text,
     session: req.params.session,
@@ -31,7 +33,7 @@ app.get('/api/post/:text/:session', (req, res, next) => {
   });
 });
 
-app.get('/api/delete/:id', (req, res) => {
+server.get('/api/delete/:id', (req, res) => {
   Todo.remove({ _id: req.params.id }, (err) => {
     if (!err) {
       res.sendStatus(200);
@@ -41,10 +43,10 @@ app.get('/api/delete/:id', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
+server.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 
-app.listen(process.env.PORT || 3001, () => {
+server.listen(process.env.PORT || 3001, () => {
   console.log('listening');
 });
