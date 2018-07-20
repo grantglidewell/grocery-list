@@ -5,7 +5,7 @@ const path = require('path');
 
 const server = express();
 
-server.use(server.static(path.resolve(__dirname, 'build')));
+server.use(express.static(path.resolve(__dirname, 'build')));
 
 mongoose.Promise = global.Promise;
 
