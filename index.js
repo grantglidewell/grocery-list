@@ -15,9 +15,9 @@ server.get('/api/data/:session', (req, res) => {
   });
 });
 
-server.post('/api/post/:text/:session', (req, res) => {
+server.post('/api/post/:todo/:session', (req, res) => {
   let newRows;
-  connection.query(`INSERT INTO todos VALUES (${req.params.session}, ${req.params.text})`, null, (err, rows) => {
+  connection.query('INSERT INTO todos (owner, todo) VALUES (?,?)', [req.params.session, req.params.todo], (err, rows) => {
     if (err) console.log(err);
     newRows = rows;
     return rows;
