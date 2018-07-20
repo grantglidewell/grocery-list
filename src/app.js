@@ -35,7 +35,7 @@ class App extends Component {
   }
   postItem(text) {
     // text = text.replace(/\?|\:|\'|\"|\!/g, '')
-    fetch(encodeURI(`${this.state.uri}/post/${text}/${this.state.session}`),  { method: 'POST'})
+    fetch(encodeURI(`${this.state.uri}/post/${text}/${this.state.session}`))
       .then(() => this.getData())
       .then(() => this.input.value = '')
   }

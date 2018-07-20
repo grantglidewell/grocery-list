@@ -1,45 +1,50 @@
-const express = require('express');
-const mysql = require('mysql');
+const app = require('express')();
+const mongoose = require('mongoose');
+const Todo = require('./models/todo');
 const path = require('path');
 
-const server = express();
-const connection = mysql.createConnection(process.env.JAWSDB_URL);
+app.use(app.static(path.resolve(__dirname, 'build')));
 
-connection.connect();
-server.use(express.static(path.resolve(__dirname, 'build')));
+mongoose.Promise = global.Promise;
 
-server.get('/api/data/:session', (req, res) => {
-  connection.query(`SELECT * from todos WHERE owner='${req.params.session}'`, (err, rows) => {
-    if (err) console.log(err);
-    return res.json(rows);
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true });
+
+app.get('/api/data/:session', (req, res) => {
+  Todo.find((err, data) => {
+    if (err) {
+      console.error(err);
+    }
+    return res.jsonp(data);
   });
 });
 
-server.post('/api/post/:todo/:session', (req, res) => {
-  let newRows;
-  connection.query('INSERT INTO todos (owner, todo) VALUES (?,?)', [req.params.session, req.params.todo], (err, rows) => {
-    if (err) console.log(err);
-    newRows = rows;
-    return rows;
+app.get('/api/post/:text/:session', (req, res, next) => {
+  const post = new Todo({
+    todo: req.params.text,
+    session: req.params.session,
   });
-  return res.sendStatus(201, newRows);
+  post.save((err, postText) => {
+    if (err) {
+      return next(err);
+    }
+    return res.sendStatus(201, postText);
+  });
 });
 
-
-server.get('/api/delete/:id', (req, res) => {
-  const newID = req.params.id.replace(/[A-z]/g, ' ').trim().slice(0, -4);
-  connection.query('DELETE FROM todos WHERE id =?', [newID], (err, rows) => {
-    if (err) console.log(err);
-    console.log(rows);
-    return rows.changedRows;
+app.get('/api/delete/:id', (req, res) => {
+  Todo.remove({ _id: req.params.id }, (err) => {
+    if (!err) {
+      res.sendStatus(200);
+    } else {
+      console.error(err);
+    }
   });
-  return res.sendStatus(200);
 });
 
-server.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 
-server.listen(process.env.PORT || 3001, () => {
+app.listen(process.env.PORT || 3001, () => {
   console.log('listening');
 });
