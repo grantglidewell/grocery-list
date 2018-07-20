@@ -3,7 +3,7 @@ const mysql = require('mysql');
 const path = require('path');
 
 const server = express();
-const connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL);
+const connection = mysql.createConnection(process.env.JAWSDB_URL);
 
 connection.connect();
 server.use(express.static(path.resolve(__dirname, 'build')));
