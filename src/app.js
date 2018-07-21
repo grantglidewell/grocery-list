@@ -46,8 +46,8 @@ class App extends Component {
   }
   TodoList = () => (
     <ul>
-      {this.state.todos.map(e => <li key={e.id}>
-        <button onClick={() => this.deleteItem(e.id)}>
+      {this.state.todos.map(e => <li key={e._id}>
+        <button onClick={() => this.deleteItem(e._id)}>
          <span role="img" aria-label="check">✔️</span>
         </button>{e.todo}</li>)}
     </ul>
