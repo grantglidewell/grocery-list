@@ -19,7 +19,7 @@ server.get('/api/data/:session', (req, res) => {
     if (err) {
       console.error(err)
     }
-    return res.jsonp(data)
+    return res.jsonp(data.filter(todo => todo.session === req.params.session))
   })
 })
 
