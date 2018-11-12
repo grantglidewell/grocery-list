@@ -30,16 +30,9 @@ class App extends Component {
     )
   }
   postItem(text) {
-    fetch(
-      encodeURI(
-        `${this.state.uri}/post/${encodeURIComponent(text)}/${
-          this.state.session
-        }`
-      ),
-      {
-        method: 'POST'
-      }
-    )
+    fetch(encodeURI(`${this.state.uri}/post/${text}/${this.state.session}`), {
+      method: 'POST'
+    })
       .then(() => this.getData())
       .then(() => (this.input.value = ''))
   }
