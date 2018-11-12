@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise
 
 mongoose.connect(
   process.env.MONGODB_URI,
-  { useMongoClient: true }
+  { useNewUrlParser: true }
 )
 
 server.get('/api/data/:session', (req, res) => {
@@ -23,10 +23,24 @@ server.get('/api/data/:session', (req, res) => {
   })
 })
 
-server.get('/api/post/:text/:session', (req, res, next) => {
+server.patch('/api/softDel/:id/:session', (req, res) => {
+  Todo.findById(req.params.id, (err, todo) => {
+    if (err) {
+      console.error(err)
+    }
+    todo.deleted = todo.deleted == true ? false : true
+    todo.save(function(err, updatedTodo) {
+      if (err) return handleError(err)
+      res.sendStatus(200)
+    })
+  })
+})
+
+server.post('/api/post/:text/:session', (req, res, next) => {
   const post = new Todo({
     todo: req.params.text,
-    session: req.params.session
+    session: req.params.session,
+    deleted: false
   })
   post.save((err, postText) => {
     if (err) {
@@ -36,7 +50,7 @@ server.get('/api/post/:text/:session', (req, res, next) => {
   })
 })
 
-server.get('/api/delete/:id', (req, res) => {
+server.delete('/api/delete/:id', (req, res) => {
   Todo.remove({ _id: req.params.id }, err => {
     if (!err) {
       res.sendStatus(200)
