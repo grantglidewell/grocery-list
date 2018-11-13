@@ -90,9 +90,9 @@ class App extends Component {
                   {e.todo}
                 </small>
                 <button
-                  style={{ marginLeft: '1rem' }}
+                  style={{ marginLeft: '1rem', opacity: '0.5' }}
                   onClick={() => this.softDelete(e._id)}>
-                  ❗️
+                  ⤴
                 </button>
               </Fragment>
             ) : (
@@ -105,7 +105,7 @@ class App extends Component {
   }
 
   RenderInput = () => (
-    <div>
+    <div style={{ display: 'flex', marginTop: '2rem' }}>
       <input type="submit" onClick={() => this.handleSubmit()} value="ToDo" />
       <input
         type="text"
@@ -119,9 +119,7 @@ class App extends Component {
   render() {
     return (
       <div className="flex">
-        <div className="input">
-          <this.RenderInput />
-        </div>
+        <this.RenderInput />
         {this.state.todos.length ? (
           <this.RenderList />
         ) : (

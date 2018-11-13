@@ -10,7 +10,8 @@ server.use(express.static(path.resolve(__dirname, 'build')))
 mongoose.Promise = global.Promise
 
 mongoose.connect(
-  process.env.MONGODB_URI,
+  // process.env.MONGODB_URI,
+  'mongodb://heroku_x839hp1z:hv8eda9kgem714l5b86dk8h6h2@ds243501.mlab.com:43501/heroku_x839hp1z',
   { useNewUrlParser: true }
 )
 
